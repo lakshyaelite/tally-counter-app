@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a Progressive Web App (PWA) tally counter application built with modern web technologies. The app allows users to create, manage, and interact with multiple counters on mobile devices with offline capabilities and native app-like experience.
+This is a Progressive Web App (PWA) tally counter application built with modern web technologies. The app allows users to create, manage, and interact with multiple counters on mobile devices with offline capabilities and native app-like experience. The app features full dark mode support with theme switching capabilities.
 
 ## User Preferences
 
@@ -31,6 +31,7 @@ Preferred communication style: Simple, everyday language.
 - **Manifest**: Web app manifest with proper icons and metadata
 - **Mobile Optimization**: Responsive design optimized for mobile devices
 - **Installable**: Can be installed as a native app on mobile devices
+- **Dark Mode**: Full theme support with automatic system preference detection and manual override
 
 ## Key Components
 
@@ -43,6 +44,8 @@ Preferred communication style: Simple, everyday language.
 - **Counter Cards**: Interactive counter displays with increment/decrement controls
 - **Create Counter Sheet**: Bottom sheet for adding new counters
 - **Delete Dialog**: Confirmation dialog for counter deletion
+- **Settings Sheet**: Theme selection interface with light/dark mode toggle
+- **Theme Provider**: Context provider managing theme state and localStorage persistence
 - **Toast Notifications**: User feedback system
 
 ### State Management
