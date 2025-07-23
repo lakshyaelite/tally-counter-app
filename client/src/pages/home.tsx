@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { CounterCard } from "@/components/counter-card";
 import { CreateCounterSheet } from "@/components/create-counter-sheet";
 import { DeleteDialog } from "@/components/delete-dialog";
+import { SettingsSheet } from "@/components/settings-sheet";
 import { useCounters } from "@/hooks/use-counters";
 import type { Counter } from "@shared/schema";
 
 export default function Home() {
   const { counters, createCounter, deleteCounter, updateCounter, resetCounter } = useCounters();
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
+  const [isSettingsSheetOpen, setIsSettingsSheetOpen] = useState(false);
   const [deleteCounterId, setDeleteCounterId] = useState<string | null>(null);
 
   const handleIncrement = (counter: Counter) => {
@@ -47,9 +49,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[hsl(60,4.8%,95.9%)]">
+    <div className="min-h-screen bg-muted dark:bg-background">
       {/* Header */}
-      <header className="bg-[hsl(207,90%,54%)] text-white shadow-lg sticky top-0 z-40">
+      <header className="bg-primary text-primary-foreground shadow-lg sticky top-0 z-40">
         <div className="flex items-center justify-between px-4 py-4">
           <div className="flex items-center space-x-3">
             <Calculator className="h-6 w-6" />
@@ -58,7 +60,8 @@ export default function Home() {
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-white/10 rounded-full"
+            onClick={() => setIsSettingsSheetOpen(true)}
+            className="text-primary-foreground hover:bg-primary-foreground/10 rounded-full"
           >
             <Settings className="h-5 w-5" />
           </Button>
@@ -70,16 +73,16 @@ export default function Home() {
         {counters.length === 0 ? (
           /* Empty State */
           <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center">
-            <div className="w-24 h-24 bg-[hsl(207,90%,54%)]/10 rounded-full flex items-center justify-center mb-6">
-              <Plus className="h-10 w-10 text-[hsl(207,90%,54%)]" />
+            <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+              <Plus className="h-10 w-10 text-primary" />
             </div>
-            <h2 className="text-2xl font-medium text-gray-800 mb-2">No Counters Yet</h2>
-            <p className="text-gray-600 mb-8 max-w-sm">
+            <h2 className="text-2xl font-medium text-foreground mb-2">No Counters Yet</h2>
+            <p className="text-muted-foreground mb-8 max-w-sm">
               Create your first tally counter to start tracking anything you want!
             </p>
             <Button
               onClick={() => setIsCreateSheetOpen(true)}
-              className="bg-[hsl(207,90%,54%)] hover:bg-[hsl(207,90%,47%)] text-white px-8 py-3 rounded-full font-medium shadow-lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-full font-medium shadow-lg"
             >
               Create First Counter
             </Button>
@@ -106,7 +109,7 @@ export default function Home() {
       <div className="fixed bottom-6 right-6">
         <Button
           onClick={() => setIsCreateSheetOpen(true)}
-          className="w-14 h-14 bg-[hsl(207,90%,54%)] hover:bg-[hsl(207,90%,47%)] text-white rounded-full shadow-2xl transform hover:scale-105 transition-all duration-200"
+          className="w-14 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-2xl transform hover:scale-105 transition-all duration-200"
         >
           <Plus className="h-6 w-6" />
         </Button>
@@ -124,6 +127,12 @@ export default function Home() {
         open={deleteCounterId !== null}
         onOpenChange={(open) => !open && setDeleteCounterId(null)}
         onConfirm={confirmDelete}
+      />
+
+      {/* Settings Sheet */}
+      <SettingsSheet
+        open={isSettingsSheetOpen}
+        onOpenChange={setIsSettingsSheetOpen}
       />
     </div>
   );

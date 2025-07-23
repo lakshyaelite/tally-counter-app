@@ -22,17 +22,17 @@ export function DeleteDialog({ open, onOpenChange, onConfirm }: DeleteDialogProp
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm rounded-2xl">
+      <DialogContent className="max-w-sm rounded-2xl bg-background" aria-describedby="delete-dialog-description">
         <div className="flex flex-col items-center text-center">
-          <div className="flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
-            <AlertTriangle className="h-8 w-8 text-[hsl(0,84.2%,60.2%)]" />
+          <div className="flex items-center justify-center w-16 h-16 bg-destructive/10 rounded-full mb-4">
+            <AlertTriangle className="h-8 w-8 text-destructive" />
           </div>
           
           <DialogHeader className="space-y-2 mb-6">
-            <DialogTitle className="text-xl font-medium text-gray-800">
+            <DialogTitle className="text-xl font-medium text-foreground">
               Delete Counter?
             </DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogDescription id="delete-dialog-description" className="text-muted-foreground">
               This action cannot be undone. All count data will be permanently lost.
             </DialogDescription>
           </DialogHeader>
@@ -41,13 +41,13 @@ export function DeleteDialog({ open, onOpenChange, onConfirm }: DeleteDialogProp
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="flex-1 py-3 px-6 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50"
+              className="flex-1 py-3 px-6 border border-border text-foreground rounded-xl font-medium hover:bg-muted"
             >
               Cancel
             </Button>
             <Button
               onClick={handleConfirm}
-              className="flex-1 py-3 px-6 bg-[hsl(0,84.2%,60.2%)] text-white rounded-xl font-medium hover:bg-red-600"
+              className="flex-1 py-3 px-6 bg-destructive text-destructive-foreground rounded-xl font-medium hover:bg-destructive/90"
             >
               Delete
             </Button>

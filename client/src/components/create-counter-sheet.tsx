@@ -43,18 +43,18 @@ export function CreateCounterSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-3xl">
-        <div className="mx-auto w-12 h-1 bg-gray-300 rounded-full mb-6" />
+      <SheetContent side="bottom" className="rounded-t-3xl bg-background">
+        <div className="mx-auto w-12 h-1 bg-muted-foreground/20 rounded-full mb-6" />
         
         <SheetHeader className="text-center mb-6">
-          <SheetTitle className="text-2xl font-medium text-gray-800">
+          <SheetTitle className="text-2xl font-medium text-foreground">
             Create New Counter
           </SheetTitle>
         </SheetHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="name" className="text-sm font-medium text-foreground">
               Counter Name
             </Label>
             <Input
@@ -64,13 +64,13 @@ export function CreateCounterSheet({
               placeholder="e.g., Daily Steps, Water Intake..."
               maxLength={50}
               required
-              className="mt-2 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[hsl(207,90%,54%)] focus:border-transparent"
+              className="mt-2 px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
             />
-            <div className="text-xs text-gray-500 mt-1">Maximum 50 characters</div>
+            <div className="text-xs text-muted-foreground mt-1">Maximum 50 characters</div>
           </div>
 
           <div>
-            <Label htmlFor="initialValue" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="initialValue" className="text-sm font-medium text-foreground">
               Starting Value (Optional)
             </Label>
             <Input
@@ -81,7 +81,7 @@ export function CreateCounterSheet({
               placeholder="0"
               min="0"
               step="1"
-              className="mt-2 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[hsl(207,90%,54%)] focus:border-transparent"
+              className="mt-2 px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-foreground"
             />
           </div>
 
@@ -90,13 +90,13 @@ export function CreateCounterSheet({
               type="button"
               variant="outline"
               onClick={handleCancel}
-              className="flex-1 py-3 px-6 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50"
+              className="flex-1 py-3 px-6 border border-border text-foreground rounded-xl font-medium hover:bg-muted"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="flex-1 py-3 px-6 bg-[hsl(207,90%,54%)] text-white rounded-xl font-medium hover:bg-[hsl(207,90%,47%)] shadow-md"
+              className="flex-1 py-3 px-6 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 shadow-md"
             >
               Create Counter
             </Button>
