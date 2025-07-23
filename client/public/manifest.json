@@ -1,0 +1,31 @@
+{
+  "name": "Tally Counter",
+  "short_name": "Tally",
+  "description": "Cross-platform tally counter app for mobile devices",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F5F5",
+  "theme_color": "#2196F3",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%232196F3'/%3E%3Crect width='32' height='96' x='48' y='56' fill='white'/%3E%3Crect width='32' height='128' x='112' y='24' fill='white'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%232196F3'/%3E%3Crect width='85' height='256' x='128' y='149' fill='white'/%3E%3Crect width='85' height='341' x='299' y='64' fill='white'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='540' height='720' viewBox='0 0 540 720'%3E%3Crect width='540' height='720' fill='%23F5F5F5'/%3E%3Crect width='540' height='80' fill='%232196F3'/%3E%3Ctext x='20' y='50' font-family='Arial' font-size='24' fill='white'%3ETally Counter%3C/text%3E%3Crect width='500' height='150' x='20' y='120' rx='20' fill='white'/%3E%3Ctext x='40' y='170' font-family='Arial' font-size='20' fill='%23333'%3ESteps Walked%3C/text%3E%3Ctext x='270' y='220' font-family='Arial' font-size='48' fill='%232196F3'%3E1,247%3C/text%3E%3C/svg%3E",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ]
+}
