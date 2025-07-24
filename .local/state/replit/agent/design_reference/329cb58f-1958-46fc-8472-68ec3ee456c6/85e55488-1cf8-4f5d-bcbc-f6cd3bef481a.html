@@ -1,0 +1,448 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tally Counter - PWA</title>
+    <meta name="description" content="Cross-platform tally counter app for mobile devices">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiVGFsbHkgQ291bnRlciIsInNob3J0X25hbWUiOiJUYWxseSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsInRoZW1lX2NvbG9yIjoiIzIxOTZGMyIsImJhY2tncm91bmRfY29sb3IiOiIjRjVGNUY1In0=">
+    <meta name="theme-color" content="#2196F3">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    'roboto': ['Roboto', 'sans-serif'],
+                },
+                colors: {
+                    'material-blue': '#2196F3',
+                    'material-blue-dark': '#1976D2',
+                    'material-teal': '#03DAC6',
+                    'material-surface': '#FFFFFF',
+                    'material-background': '#F5F5F5',
+                    'material-error': '#F44336',
+                    'material-success': '#4CAF50',
+                },
+                boxShadow: {
+                    'material': '0 2px 4px rgba(0,0,0,0.12), 0 0 6px rgba(0,0,0,0.04)',
+                    'material-elevated': '0 4px 8px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)',
+                    'material-fab': '0 6px 16px rgba(0,0,0,0.12), 0 3px 6px rgba(0,0,0,0.16)',
+                }
+            }
+        }
+    };
+    </script>
+    <style>
+        .ripple {
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0);
+        }
+        .ripple:before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .ripple:active:before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .counter-animation {
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .slide-up {
+            animation: slideUp 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-material-background font-roboto">
+    <!-- @COMPONENT: AppHeader -->
+    <header class="bg-material-blue text-white shadow-material-elevated sticky top-0 z-40">
+        <div class="flex items-center justify-between px-4 py-4">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-calculator text-2xl"></i>
+                <h1 class="text-xl font-medium">Tally Counter</h1>
+            </div>
+            <button data-event="click:showSettings" class="p-2 rounded-full hover:bg-black hover:bg-opacity-10 transition-colors">
+                <i class="fas fa-cog text-xl"></i>
+            </button>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: AppHeader -->
+
+    <!-- @COMPONENT: MainContent -->
+    <main class="pb-20" data-mock="true">
+        <!-- @STATE: counters:array = [] -->
+        <!-- Empty State -->
+        <div id="emptyState" class="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center">
+            <div class="w-24 h-24 bg-material-blue bg-opacity-10 rounded-full flex items-center justify-center mb-6">
+                <i class="fas fa-plus-circle text-4xl text-material-blue"></i>
+            </div>
+            <h2 class="text-2xl font-medium text-gray-800 mb-2">No Counters Yet</h2>
+            <p class="text-gray-600 mb-8 max-w-sm">Create your first tally counter to start tracking anything you want!</p>
+            <button data-event="click:showCreateCounter" class="bg-material-blue text-white px-8 py-3 rounded-full font-medium shadow-material-elevated ripple">
+                Create First Counter
+            </button>
+        </div>
+
+        <!-- Counters List -->
+        <div id="countersList" class="hidden px-4 pt-4 space-y-4">
+            <!-- @MAP: counters.map(counter => ( -->
+            
+            <!-- @COMPONENT: CounterCard [counter object] -->
+            <div class="bg-white rounded-2xl shadow-material p-6 fade-in" data-mock="true">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-medium text-gray-800" data-bind="counter.name">Steps Walked</h3>
+                        <p class="text-sm text-gray-500" data-bind="counter.createdDate">Created today</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button data-event="click:resetCounter" data-implementation="Reset counter to 0" class="p-2 text-gray-400 hover:text-material-blue hover:bg-blue-50 rounded-full transition-colors">
+                            <i class="fas fa-undo text-sm"></i>
+                        </button>
+                        <button data-event="click:deleteCounter" data-implementation="Show delete confirmation" class="p-2 text-gray-400 hover:text-material-error hover:bg-red-50 rounded-full transition-colors">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-center space-x-6">
+                    <!-- Decrement Button -->
+                    <button data-event="click:decrementCounter" data-implementation="Decrease counter value by 1" class="w-16 h-16 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-2xl text-gray-600 ripple transition-colors counter-animation">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    
+                    <!-- Counter Display -->
+                    <div class="flex-1 text-center">
+                        <div class="text-5xl font-light text-material-blue counter-animation" data-bind="counter.value">1,247</div>
+                        <div class="text-sm text-gray-500 mt-1">Total Count</div>
+                    </div>
+                    
+                    <!-- Increment Button -->
+                    <button data-event="click:incrementCounter" data-implementation="Increase counter value by 1" class="w-16 h-16 bg-material-blue hover:bg-material-blue-dark text-white rounded-full flex items-center justify-center text-2xl ripple transition-colors counter-animation shadow-material">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: CounterCard -->
+            
+            <!-- Additional Sample Counters -->
+            <div class="bg-white rounded-2xl shadow-material p-6 fade-in" data-mock="true">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-medium text-gray-800">Water Glasses</h3>
+                        <p class="text-sm text-gray-500">Created yesterday</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="p-2 text-gray-400 hover:text-material-blue hover:bg-blue-50 rounded-full transition-colors">
+                            <i class="fas fa-undo text-sm"></i>
+                        </button>
+                        <button class="p-2 text-gray-400 hover:text-material-error hover:bg-red-50 rounded-full transition-colors">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-center space-x-6">
+                    <button class="w-16 h-16 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-2xl text-gray-600 ripple transition-colors counter-animation">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    
+                    <div class="flex-1 text-center">
+                        <div class="text-5xl font-light text-material-blue counter-animation">6</div>
+                        <div class="text-sm text-gray-500 mt-1">Total Count</div>
+                    </div>
+                    
+                    <button class="w-16 h-16 bg-material-blue hover:bg-material-blue-dark text-white rounded-full flex items-center justify-center text-2xl ripple transition-colors counter-animation shadow-material">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-material p-6 fade-in" data-mock="true">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-medium text-gray-800">Push-ups</h3>
+                        <p class="text-sm text-gray-500">Created 3 days ago</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="p-2 text-gray-400 hover:text-material-blue hover:bg-blue-50 rounded-full transition-colors">
+                            <i class="fas fa-undo text-sm"></i>
+                        </button>
+                        <button class="p-2 text-gray-400 hover:text-material-error hover:bg-red-50 rounded-full transition-colors">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-center space-x-6">
+                    <button class="w-16 h-16 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-2xl text-gray-600 ripple transition-colors counter-animation">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    
+                    <div class="flex-1 text-center">
+                        <div class="text-5xl font-light text-material-blue counter-animation">23</div>
+                        <div class="text-sm text-gray-500 mt-1">Total Count</div>
+                    </div>
+                    
+                    <button class="w-16 h-16 bg-material-blue hover:bg-material-blue-dark text-white rounded-full flex items-center justify-center text-2xl ripple transition-colors counter-animation shadow-material">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- @END_MAP )) -->
+        </div>
+    </main>
+    <!-- @END_COMPONENT: MainContent -->
+
+    <!-- @COMPONENT: FloatingActionButton -->
+    <div class="fixed bottom-6 right-6">
+        <button id="fabButton" data-event="click:showCreateCounter" data-implementation="Show create counter bottom sheet" class="w-14 h-14 bg-material-blue hover:bg-material-blue-dark text-white rounded-full shadow-material-fab flex items-center justify-center ripple transition-all duration-200 transform hover:scale-105">
+            <i class="fas fa-plus text-xl"></i>
+        </button>
+    </div>
+    <!-- @END_COMPONENT: FloatingActionButton -->
+
+    <!-- @COMPONENT: CreateCounterBottomSheet -->
+    <div id="createCounterSheet" class="fixed inset-0 z-50 hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black bg-opacity-50" data-event="click:hideCreateCounter"></div>
+        
+        <!-- Bottom Sheet -->
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl slide-up">
+            <div class="p-6">
+                <!-- Handle -->
+                <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6"></div>
+                
+                <h2 class="text-2xl font-medium text-gray-800 mb-6 text-center">Create New Counter</h2>
+                
+                <form data-event="submit:createCounter" data-implementation="Create new counter with form data">
+                    <div class="mb-6">
+                        <label for="counterName" class="block text-sm font-medium text-gray-700 mb-2">Counter Name</label>
+                        <input 
+                            type="text" 
+                            id="counterName" 
+                            name="counterName"
+                            placeholder="e.g., Daily Steps, Water Intake..." 
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-material-blue focus:border-transparent"
+                            required
+                            maxlength="50"
+                            data-mock="true"
+                        >
+                        <div class="text-xs text-gray-500 mt-1">Maximum 50 characters</div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="initialValue" class="block text-sm font-medium text-gray-700 mb-2">Starting Value (Optional)</label>
+                        <input 
+                            type="number" 
+                            id="initialValue" 
+                            name="initialValue"
+                            placeholder="0" 
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-material-blue focus:border-transparent"
+                            min="0"
+                            step="1"
+                            data-mock="true"
+                        >
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button 
+                            type="button" 
+                            data-event="click:hideCreateCounter"
+                            class="flex-1 py-3 px-6 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            type="submit" 
+                            class="flex-1 py-3 px-6 bg-material-blue text-white rounded-xl font-medium hover:bg-material-blue-dark transition-colors shadow-material ripple"
+                        >
+                            Create Counter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: CreateCounterBottomSheet -->
+
+    <!-- @COMPONENT: DeleteConfirmationDialog -->
+    <div id="deleteDialog" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black bg-opacity-50" data-event="click:hideDeleteDialog"></div>
+        
+        <!-- Dialog -->
+        <div class="relative bg-white rounded-2xl shadow-material-elevated max-w-sm w-full fade-in">
+            <div class="p-6">
+                <div class="flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mx-auto mb-4">
+                    <i class="fas fa-exclamation-triangle text-2xl text-material-error"></i>
+                </div>
+                
+                <h3 class="text-xl font-medium text-gray-800 text-center mb-2">Delete Counter?</h3>
+                <p class="text-gray-600 text-center mb-6">This action cannot be undone. All count data will be permanently lost.</p>
+                
+                <div class="flex space-x-3">
+                    <button 
+                        data-event="click:hideDeleteDialog"
+                        class="flex-1 py-3 px-6 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        data-event="click:confirmDelete" 
+                        data-implementation="Delete the selected counter"
+                        class="flex-1 py-3 px-6 bg-material-error text-white rounded-xl font-medium hover:bg-red-600 transition-colors"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: DeleteConfirmationDialog -->
+
+    <!-- PWA Installation Prompt -->
+    <div id="installPrompt" class="fixed bottom-20 left-4 right-4 bg-white rounded-xl shadow-material-elevated p-4 hidden">
+        <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0">
+                <i class="fas fa-mobile-alt text-2xl text-material-blue"></i>
+            </div>
+            <div class="flex-1">
+                <h4 class="font-medium text-gray-800">Install Tally Counter</h4>
+                <p class="text-sm text-gray-600">Add to your home screen for quick access</p>
+            </div>
+            <button id="installButton" class="px-4 py-2 bg-material-blue text-white text-sm rounded-lg font-medium">
+                Install
+            </button>
+            <button id="dismissInstall" class="p-2 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        // TODO: Implement PWA service worker registration
+        // TODO: Implement local storage for counters persistence
+        // TODO: Implement counter CRUD operations
+        // TODO: Implement PWA installation prompt handling
+        
+        // Mock UI interactions for demonstration
+        let isSheetOpen = false;
+        let isDeleteDialogOpen = false;
+        
+        // Show/hide create counter sheet
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('[data-event*="showCreateCounter"]')) {
+                document.getElementById('createCounterSheet').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                isSheetOpen = true;
+            }
+            
+            if (e.target.closest('[data-event*="hideCreateCounter"]') && isSheetOpen) {
+                document.getElementById('createCounterSheet').classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                isSheetOpen = false;
+            }
+        });
+        
+        // Show/hide delete dialog
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('[data-event*="deleteCounter"]')) {
+                document.getElementById('deleteDialog').classList.remove('hidden');
+                isDeleteDialogOpen = true;
+            }
+            
+            if (e.target.closest('[data-event*="hideDeleteDialog"]') && isDeleteDialogOpen) {
+                document.getElementById('deleteDialog').classList.add('hidden');
+                isDeleteDialogOpen = false;
+            }
+        });
+        
+        // Toggle between empty state and counters list
+        function toggleView() {
+            const emptyState = document.getElementById('emptyState');
+            const countersList = document.getElementById('countersList');
+            const hasCounters = true; // Mock data - in real app, check if counters array has items
+            
+            if (hasCounters) {
+                emptyState.classList.add('hidden');
+                countersList.classList.remove('hidden');
+            } else {
+                emptyState.classList.remove('hidden');
+                countersList.classList.add('hidden');
+            }
+        }
+        
+        // Initialize view on load
+        toggleView();
+        
+        // Mock counter animations
+        document.addEventListener('click', function(e) {
+            const counterDisplay = e.target.closest('[data-event*="incrementCounter"], [data-event*="decrementCounter"]')?.parentElement?.querySelector('[data-bind*="counter.value"]');
+            if (counterDisplay) {
+                counterDisplay.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    counterDisplay.style.transform = 'scale(1)';
+                }, 150);
+            }
+        });
+        
+        // PWA installation prompt (mock)
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.remove('hidden');
+        });
+        
+        document.getElementById('installButton')?.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.add('hidden');
+            }
+        });
+        
+        document.getElementById('dismissInstall')?.addEventListener('click', () => {
+            document.getElementById('installPrompt').classList.add('hidden');
+        });
+        
+    })();
+    </script>
+</body>
+</html>
