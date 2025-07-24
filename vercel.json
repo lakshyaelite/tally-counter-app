@@ -15,7 +15,7 @@
       "dest": "/dist/public/assets/$1"
     },
     {
-      "src": "/(manifest\.json|sw\.js)",
+      "src": "/(manifest\\.json|sw\\.js)",
       "dest": "/dist/public/$1"
     },
     {
