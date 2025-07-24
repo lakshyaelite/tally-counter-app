@@ -2,27 +2,17 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/index.js",
-      "use": "@vercel/node@3.0.0"
+      "src": "package.json",
+      "use": "@vercel/static-build@2.0.0",
+      "config": {
+        "distDir": "dist/public"
+      }
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/dist/index.js"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/dist/public/assets/$1"
-    },
-    {
-      "src": "/(manifest\\.json|sw\\.js)",
-      "dest": "/dist/public/$1"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/dist/public/index.html"
+      "dest": "/index.html"
     }
-  ],
-  "buildCommand": "npm run build"
+  ]
 }
