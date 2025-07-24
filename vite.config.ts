@@ -3,10 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  plugins: [
-    react(),
-  ],
-  base: "/",
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -18,15 +15,14 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks: undefined,
       },
     },
   },
-  server: {
-    fs: {
-      strict: false,
-    },
-  },
+  define: {
+    'process.env.NODE_ENV': '"production"'
+  }
 });
